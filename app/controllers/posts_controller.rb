@@ -44,8 +44,12 @@ class PostsController < ApplicationController
         render json: {Category: @item, posts: @posts.as_json, user: @current_user.as_json(only: [:username,:email])}
     end
 
+    def show
+        render json: @post
+    end
+
     def edit
-        if @current_user.id==@post.user_id || current_user.admin?
+        if @current_user.id==@post.user_id
             render json: @post
         else
             render json: "You can't do that!!"
@@ -54,7 +58,7 @@ class PostsController < ApplicationController
     
    
     def update
-        if @current_user.id == @post.user_id || current_user.admin?
+        if @current_user.id == @post.user_id
             if @post.update(post_params)
                 render json: @post
             else
@@ -66,7 +70,7 @@ class PostsController < ApplicationController
     end
     
     def destroy
-        if @current_user.id == @post.user_id || current_user.admin?
+        if @current_user.id == @post.user_id
             @post.destroy
             render json: @post
         else

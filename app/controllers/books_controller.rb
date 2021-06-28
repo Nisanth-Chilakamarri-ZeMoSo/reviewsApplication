@@ -2,7 +2,8 @@ class BooksController < ApplicationController
     before_action :set_book, only: [:show, :edit, :update, :destroy]
    
     def index
-        @books = Book.all
+        @books = Book.where(nil)
+        @books = Book.filter_by_starts_with(params[:starts_with]) if params[:starts_with].present?
         render json: @books
     end
 
@@ -35,7 +36,7 @@ class BooksController < ApplicationController
 
     def update
         if @book.update(book_params)
-            #flash[:notice] = 'book is updated successfully.'
+
             render json: @book
         else
             render json: @book.errors
@@ -43,8 +44,16 @@ class BooksController < ApplicationController
     end
     
     def destroy
-        @book.destroy
-        render json: @book
+        if @current_user.admin?
+            @id=@book.id
+            Comment.where(post_id: Post.where(category_id: Category.find_by(category_name: "books").id).where(item_id: @id)).delete_all
+            Post.where(category_id: Category.find_by(category_name: "books").id).where(item_id: @id).delete_all
+
+            @book.destroy
+            render json: @book
+        else
+            render json: "You're not an admin"
+        end
     end
 
     private

@@ -37,6 +37,14 @@ class CommentsController < ApplicationController
         render json: {post: @post, comment: @comments, user: User.find(@post.user_id).as_json(only: [:username,:email])}
 
     end
+
+    def show_by_posts_users
+        @comments = Comment.where(post_id: params[:post_id]).where(user_id: params[:user_id])
+    
+        @post = Post.find(params[:post_id])
+        render json: {post: @post, comment: @comments, user: User.find(@post.user_id).as_json(only: [:username,:email])}
+
+    end
     
     def update
         if @current_user.admin? || @current_user == @Comment.user_id
