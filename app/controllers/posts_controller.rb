@@ -12,23 +12,17 @@ class PostsController < ApplicationController
     end
 
     def create
-        
-        @post = Post.new(review: params[:review])
-       
-        if Category.find_by(category_name: params[:category_name])
-            @post.category_id = Category.find_by(category_name: params[:category_name]).id
-
-            @post.item_id = params[:item_id]
-            @post.user_id = @current_user.id
-
-            if @post.save
-                render json: @post
-            else
-                render json: @post.errors
-            end
-
+        @post = Post.new(post_params)
+        @post.user_id = @current_user.id
+        if params[:category_name]=="movies"
+            @post.commentable=Movie.find_by(id: params[:item_id])
         else
-            render json: "Can't create post for unkonwn category."
+            @post.commentable=Book.find_by(id: params[:item_id])
+        end
+        if @post.save  && @post.commentable_id
+            render json: @post, status: :created, location:@post
+        else
+            render json:{errors: @post.errors,message:"Check the api request properly"}, status: :unprocessable_entity
         end
     end
 
@@ -36,6 +30,7 @@ class PostsController < ApplicationController
         @posts = Post.where(category_id: Category.find_by(category_name: params[:category_name]).id)
                     .where(item_id: params[:item_id])
                     .where(user_id: params[:user_id])
+                    
         if params[:category_name]=='movies'
             @item = Movie.find_by(id: params[:item_id])
         else

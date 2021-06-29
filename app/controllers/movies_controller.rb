@@ -4,7 +4,7 @@ class MoviesController < ApplicationController
 
     def index
         @movies = Movie.where(nil)
-        @movies = Movie.filter_by_starts_with(params[:starts_with]) if params[:starts_with].present?
+        @movies = Movie.filter(params[:filter]) if params[:filter].present?
         render json: @movies
     end
 
@@ -44,9 +44,6 @@ class MoviesController < ApplicationController
     
     def destroy
         if @current_user.admin?
-            @id=@movie.id
-            Comment.where(post_id: Post.where(category_id: Category.find_by(category_name: "movies").id).where(item_id: @id)).delete_all
-            Post.where(category_id: Category.find_by(category_name: "movies").id).where(item_id: @id).delete_all
             @movie.destroy
             render json: @movie
         else

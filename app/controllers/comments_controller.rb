@@ -15,7 +15,7 @@ class CommentsController < ApplicationController
         @comment = Comment.new(comment_params)
         @comment.user_id = @current_user.id
         @comment.post_id = params[:post_id]
-        if @comment.save
+        if @comment.save && @comment.post_id
             render json: @comment
         else
             render json: @comment.errors
