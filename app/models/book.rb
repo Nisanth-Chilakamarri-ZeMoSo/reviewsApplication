@@ -8,4 +8,5 @@ class Book < ApplicationRecord
                             has_many :poly_comments, as: :commentable
     has_many :posts, as: :commentable, dependent: :destroy
     scope :filter_by_starts_with, -> ( title ) { where("title like ?", "#{title}%")}
+    include Filterable
 end

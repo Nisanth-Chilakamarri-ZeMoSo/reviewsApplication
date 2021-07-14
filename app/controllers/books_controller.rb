@@ -12,10 +12,8 @@ class BooksController < ApplicationController
     end
 
     def create
-        if @current_user.admin
+        if @current_user.admin?
             @book = Book.new(book_params)
-            #@book.user_id=@current_user.id
-        #@book.user = current_user
             if @book.save
                 render json: @book
             else
