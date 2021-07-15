@@ -15,10 +15,10 @@ class PostsController < ApplicationController
         @post = Post.new(post_params)
         @post.user_id = @current_user.id
         if Category.find_by(category_name: params[:commentable_name]).isReviewable?
-            if params[:category_name]=='movies'
-                @post.commentable=Movie.find_by(id: params[:item_id])
-            elsif params[:category_name]=='books'
-                @post.commentable=Book.find_by(id: params[:item_id])
+            if params[:commentable_name]=='movies'
+                @post.commentable=Movie.find_by(id: params[:commentable_id])
+            elsif params[:commentable_name]=='books'
+                @post.commentable=Book.find_by(id: params[:commentable_id])
             end
 
             if @post.save  && @post.commentable_id

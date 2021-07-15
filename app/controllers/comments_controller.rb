@@ -34,16 +34,23 @@ class CommentsController < ApplicationController
         @comments = Comment.where(post_id: params[:post_id])
     
         @post = Post.find(params[:post_id])
-        render json: {post: @post, comment: @comments, user: User.find(@post.user_id).as_json(only: [:username,:email])}
 
+        if @comments && @post
+            render json: {post: @post, comment: @comments, user: User.find(@post.user_id).as_json(only: [:username,:email])}
+        else
+            render json: {message: "Not present"}
+        end
     end
 
     def show_by_posts_users
         @comments = Comment.where(post_id: params[:post_id]).where(user_id: params[:user_id])
     
         @post = Post.find(params[:post_id])
-        render json: {post: @post, comment: @comments, user: User.find(@post.user_id).as_json(only: [:username,:email])}
-
+        if @comments && @post
+            render json: {post: @post, comment: @comments, user: User.find(@post.user_id).as_json(only: [:username,:email])}
+        else
+            render json: {message: "Not present"}
+        end
     end
     
     def update
